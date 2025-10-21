@@ -74,14 +74,6 @@ gh-pages:
 	git commit --allow-empty -m "Add release branch"
 	# Split off the `src/` directory into its own branch.
 	RELEASE=$$(git subtree split --prefix=src)
-	# Checkout the development branch, squash it, and split it off, just like `release`.
-	git checkout dev
-	git branch -D squashed
-	git checkout -b squashed
-	git reset $$TAIL
-	git add -A
-	git commit --allow-empty -m "Add dev branch"
-	DEV=$$(git subtree split --prefix=src)
 
 	# Checkout the GitHub Pages branch in a new worktree. We use a new worktree because the branch
 	# is essentially incomparable with the other branches and we don't want to get any git conflicts
@@ -100,20 +92,8 @@ gh-pages:
 	cp $$BASE_DIR/src/icon-512.png .
 	cp $$BASE_DIR/src/icon-192.png .
 
-	# Merge the development branch into the `dev/` directory.
-	git merge -s ours --no-commit $$DEV
-	git read-tree --prefix=dev -u $$DEV
-	# We have already cloned KaTeX and stripped it of git repository information, so don't need to
-	# do so again: we can just copy it across. Note that we do not include the service worker in
-	# dev.
-	cp -r KaTeX dev
-	git add -A
-	git commit -m "Merge dev as subdirectory of release"
-
-	# Set the `CNAME`.
-	printf "q.uiver.app" > CNAME
-	git add CNAME
-	git commit -m "Create CNAME"
+	git add .
+	git commit -m "Summary commit"
 	# Push to the remote `gh-pages` branch, which will trigger a rebuild on GitHub Pages.
 	git push --force
 

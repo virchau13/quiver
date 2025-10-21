@@ -50,7 +50,7 @@ Object.assign(CONSTANTS, {
     MIN_ZOOM: -2.5,
     MAX_ZOOM: 1,
     // The default engine for rendering mathematics. The options are `katex` and `typst`.
-    DEFAULT_RENDERER: "katex",
+    DEFAULT_RENDERER: "typst",
     // Preamble used to render the Typst labels.
     TYPST_PREAMBLE: "#set page(width: auto, height: auto, margin: 0em)\n#set text(font: \"New Computer Modern\", 32pt)\n",
     // Fletcher version.
@@ -1010,85 +1010,17 @@ class UI {
         // Set up the "About" pane.
         panes.push(new DOM.Div({ id: "about-pane", class: "pane hidden" })
             .add(new DOM.Element("h1").add("About"))
-            .add(new DOM.Element("p").add(new DOM.Element("b").add("quiver")).add(
-                " is a modern, graphical editor for commutative and pasting " +
-                "diagrams, capable of rendering high-quality diagrams for screen viewing, and " +
-                "exporting to LaTeX via "
-            ).add(new DOM.Code("tikz-cd"))
-            .add(" and Typst via ")
-            .add(new DOM.Code("fletcher"))
-            .add("."))
-            .add(new DOM.Element("p")
-                .add("Creating and modifying diagrams with ")
-                .add(new DOM.Element("b").add("quiver"))
-                .add(
-                    " is orders of magnitude faster than writing the equivalent LaTeX or Typst " +
-                    "by hand and, with a little experience, competes with pen-and-paper."
-                )
-                .add(" To learn how to use ")
-                .add(new DOM.Element("b").add("quiver"))
-                .add(" efficiently, see ")
-                .add(new DOM.Link(
-                    "https://github.com/varkor/quiver/blob/master/tutorial.md",
-                    "the tutorial"
-                ))
-                .add(".")
-            )
-            .add(new DOM.Element("p")
-                .add("The editor is open source and may be found ")
-                .add(new DOM.Link("https://github.com/varkor/quiver", "on GitHub", true))
-                .add(
-                    ". If you would like to request a feature, or want to report an issue, you can "
-                ).add(new DOM.Link("https://github.com/varkor/quiver/issues", "do so here", true))
-                .add(".")
-            )
-            .add(new DOM.Element("p").add("You can follow ")
-                .add(new DOM.Element("b").add("quiver")).add(" on ")
-                .add(new DOM.Link("https://mathstodon.xyz/@quiver", "Mastodon", true))
-                .add(" or ")
-                .add(new DOM.Link("https://twitter.com/q_uiver_app", "Twitter", true))
-                .add(" for updates on new features.")
-            )
-            .add(new DOM.Element("h2").add("Thanks to"))
-            .add(new DOM.List(false, [
-                new DOM.Element("li").add(
-                    new DOM.Link("https://www.cl.cam.ac.uk/~scs62/", "S. C. Steenkamp", true)
-                ).add(", for helpful discussions regarding the aesthetic rendering of arrows."),
-                new DOM.Element("li").add(
-                    new DOM.Link(
-                        "https://tex.stackexchange.com/users/138900/andr%c3%a9c",
-                        "AndréC",
-                        true,
-                    )
-                ).add(", for the custom TikZ style for curves of a fixed height."),
-                new DOM.Element("li").add(
-                    new DOM.Link(
-                        "https://tex.stackexchange.com/users/86/andrew-stacey",
-                        "Andrew Stacey",
-                        true,
-                    )
-                ).add(", for the custom TikZ style for shortened curves."),
-                new DOM.Element("li").add(
-                    new DOM.Link("https://github.com/tjbcg", "Théophile Cailliau", true)
-                ).add(", for implementing Typst support."),
-                new DOM.Element("li").add(
-                    new DOM.Link("https://github.com/doctorn", "Nathan Corbyn", true)
-                ).add(", for adding the ability to export embeddable diagrams to HTML."),
-                new DOM.Element("li").add(
-                    new DOM.Link("https://github.com/paolobrasolin", "Paolo Brasolin", true)
-                ).add(", for adding offline support."),
-                new DOM.Element("li").add(
-                    new DOM.Link("https://github.com/davidson16807", "Carl Davidson", true)
-                ).add(", for discussing and prototyping loop rendering."),
-                new DOM.Element("li").add(
-                    "Everyone who has improved "
-                ).add(new DOM.Element("b").add("quiver"))
-                .add(" by submitting pull requests, reporting issues or suggesting improvements.")
-            ]))
-            .add(new DOM.Element("footer")
-                .add("Created by ")
-                .add(new DOM.Link("https://github.com/varkor", "varkor", true))
-                .add(".")
+            .add(new DOM.Element("p").add(
+                    "This is literally just a fork of https://q.uiver.app/ with " +
+                    "the arrow style setting set to 'none' by default " +
+                    "and Typst export enabled by default " + 
+                    "for convenience in making graphs. " +
+                    "Full credit to the original author: "
+                ).add(new DOM.Link("https://github.com/varkor", "varkor", true))
+            ).add(new DOM.Element("footer")
+                .add("Modified by ")
+                .add(new DOM.Link("https://github.com/virchau13", "virchau13", true))
+                //.add(".")
             )
         );
 
@@ -1109,7 +1041,7 @@ class UI {
         const welcome_pane = new DOM.Div({
             id: "welcome-pane",
             // We only display the welcome pane the first time the user visits quiver.
-            class: "pane" + (version_previous_use ? " hidden" : "")
+            class: "pane" + (true /* version_previous_use */ ? " hidden" : "")
         }).add(new DOM.Element("h1").add("Welcome"))
             .add(new DOM.Element("p").add(new DOM.Element("b").add("quiver")).add(
                     " is a modern, graphical editor for commutative and pasting " +
@@ -1170,10 +1102,10 @@ class UI {
         }
 
         // Add the version information underneath the logo.
-        this.element.add(new DOM.Element(
-            "span",
-            { class: "version hidden" }
-        ).add(`Version ${CONSTANTS.VERSION}`));
+        // this.element.add(new DOM.Element(
+        //     "span",
+        //     { class: "version hidden" }
+        // ).add(`Version ${CONSTANTS.VERSION}`));
 
         // Add the focus point for new nodes.
         this.focus_point = new DOM.Div({ class: "focus-point focused smooth" })
@@ -7899,7 +7831,7 @@ export class Edge extends Cell {
                 name: "arrow",
                 tail: { name: "none" },
                 body: { name: "cell" },
-                head: { name: "arrowhead" },
+                head: { name: "none" },
             },
         };
 

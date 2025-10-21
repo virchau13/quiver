@@ -8250,7 +8250,7 @@ document.addEventListener("DOMContentLoaded", () => {
     };
 
     // Immediately load the KaTeX library as an ES6 module (regardless of the current renderer).
-    KaTeX = import("/KaTeX/katex.mjs").then((module) => {
+    KaTeX = import("./KaTeX/katex.mjs").then((module) => {
         // KaTeX is fast enough to be worth waiting for, but not
         // immediately available. In this case, we delay loading
         // the quiver until the library has loaded.
@@ -8270,11 +8270,6 @@ document.addEventListener("DOMContentLoaded", () => {
         rel: "stylesheet",
         href: "KaTeX/katex.css",
     }).element);
-
-    // Prevent clicking on the logo from having any effect other than opening the link.
-    body.query_selector("#logo-link").listen("pointerdown", (event) => {
-        event.stopPropagation();
-    });
 
     // Listen for history change events, and update the diagram accordingly.
     window.addEventListener("popstate", () => {

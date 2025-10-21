@@ -22,8 +22,8 @@ src/Workbox/workbox-%:
 # Build service worker.
 service-worker: service-worker/build.js
 	cd $(dir $<)
-	if [ ! -z "$$NVM_DIR" ]; then . $$NVM_DIR/nvm.sh; fi
-	nvm use 20 && npm install && node build.js
+	# if [ ! -z "$$NVM_DIR" ]; then . $$NVM_DIR/nvm.sh; fi
+	npm install && node build.js
 
 # Generate icons required by the webapp manifest. Requires ImageMagick.
 src/icon-512.png: src/icon.png
@@ -41,13 +41,13 @@ dev:
 # Update the `release` branch from `dev`, and build the service worker.
 release:
 	set -e
-	git checkout release
+	git checkout master
 	git rebase dev
 	make service-worker
 	git checkout @{-1}
 
 # Update the quiver GitHub Pages application.
-gh-pages:
+gh-pages: service-worker
 	# We use several branches for the deployment workflow.
 	# - `master`: Main development branch.
 	# - `release`: The branch that is used for hosting on GitHub Pages.
@@ -57,12 +57,13 @@ gh-pages:
 
 	# Terminate if there are any errors. We may have to do some manual cleanup in this case, but
 	# it's better than trying to push a broken version of quiver.
-	set -e
+	printf '--start--'
+	set -ex
 	BASE_DIR=$$PWD
 	# Store the name of the current branch, to return to it after completing this process.
 	CURRENT=$$(git rev-parse --abbrev-ref HEAD)
 	# Checkout the release branch.
-	git checkout release
+	git checkout master
 	# Get the initial commit ID, which will be used for squashing history.
 	TAIL=$$(git rev-list --max-parents=0 HEAD)
 	# Copy the release branch on to a new branch, for squashing purposes.
